@@ -1,3 +1,6 @@
+// simple echo server, the server returns the request from the client 
+// call server/ connect to socket with netcat: nc -U /tmp/echo.sock
+
 package main
 
 import (
