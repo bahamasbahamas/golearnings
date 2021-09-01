@@ -12,6 +12,5 @@ if ($errno !== 0) {
 fwrite($sock, '{"name":"tony"}');
 
 // read server response
-echo fread($sock, 4096) . "\n";
-
+echo stream_get_contents($sock);
 fclose($sock);
