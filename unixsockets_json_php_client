@@ -1,0 +1,17 @@
+<?php
+
+// SOCKET_PATH Path to socket file
+const SOCKET_PATH = 'unix:///tmp/echo.sock';
+
+// create client
+$sock = stream_socket_client(SOCKET_PATH, $errno, $errstr);
+if ($errno !== 0) {
+    echo $errstr;
+}
+// call server
+fwrite($sock, '{"name":"tony"}');
+
+// read server response
+echo fread($sock, 4096) . "\n";
+
+fclose($sock);
