@@ -11,9 +11,7 @@ import (
 const SockAddr = "/tmp/echo.sock"
 
 type sockOut struct {
-	KeyCheckSum   uint32 `json:"KeyCheckSum"`
-	ValueCheckSum uint32 `json:"ValueCheckSum"`
-	Name          string `json:"name"`
+	Name string `json:"name"`
 }
 
 type sockIn struct {
@@ -22,22 +20,24 @@ type sockIn struct {
 
 func echoServer(c net.Conn) {
 	defer c.Close()
+	// NewDecoder returns a new decoder that reads from c
 	decode := json.NewDecoder(c)
+	// NewEncoder returns a new encoder that writes to c
 	encode := json.NewEncoder(c)
 
 	var inputJSON sockIn
+	// Decode reads the next JSON-encoded value from its input and stores it in &inputJSON
 	err := decode.Decode(&inputJSON)
 	if err != nil {
 		fmt.Printf("Error is %v", err)
 	}
 	fmt.Printf("Name: %s\n", inputJSON.Name)
 
+	// response model
 	outputJSON := sockOut{
-		KeyCheckSum:   10,
-		ValueCheckSum: 10,
-		Name:          inputJSON.Name,
+		Name: inputJSON.Name,
 	}
-	// Send response back to the socket request
+	// Encode writes the JSON encoding of outputJSON to the stream, followed by a newline character.
 	err = encode.Encode(outputJSON)
 	if err != nil {
 		fmt.Printf("Error is %v", err)
