@@ -1,0 +1,42 @@
+package main
+
+import (
+	"fmt"
+	"log"
+	"net"
+	"net/http"
+	"net/rpc"
+	"os"
+)
+
+// SockAddr path to socket path
+const SockAddr = "/tmp/rpc.sock"
+
+// Greeter type mit der Greet function
+type Greeter struct {
+}
+
+// Greet composes the greeting message
+func (g Greeter) Greet(name *string, reply *string) error {
+	*reply = "Hello, " + *name
+	return nil
+}
+
+func main() {
+	// When servers shut down, the file representing the socket can remain in the file system unless the server
+	// did orderly cleanup after itself. If we re-run another server with the same socket path, we may get an error
+	// To prevent that, the server begins by removing the socket file, if it exists.
+	if err := os.RemoveAll(SockAddr); err != nil {
+		log.Fatal(err)
+	}
+
+	greeter := new(Greeter)
+	rpc.Register(greeter)
+	rpc.HandleHTTP()
+	l, e := net.Listen("unix", SockAddr)
+	if e != nil {
+		log.Fatal("listen error:", e)
+	}
+	fmt.Println("Serving...")
+	http.Serve(l, nil)
+}
