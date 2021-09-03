@@ -6,13 +6,14 @@ import (
 	"time"
 )
 
+// result type.
 type result struct {
 	url     string
 	err     error
 	latency time.Duration
 }
-// get get the websites 
-// pass the channel as a paramenter, within the result type it is possible to store the error 
+// get just curl a websites.
+// pass the channel as a paramenter, within the result type it is possible to store the error.
 func get(url string, ch chan<- result) {
 	start := time.Now()
 	if resp, err := http.Get(url); err != nil {
@@ -35,7 +36,7 @@ func main() {
 		"https://google.de",
 		"https://nytimes.com",
 	}
-	// number of website equals number of go routines equals number of elements form the channel
+	// number of websites equal number of go routines equal number of elements in the channel
 	for _, url := range list {
 		go get(url, results)
 	}
