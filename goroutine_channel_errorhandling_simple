@@ -40,6 +40,7 @@ func main() {
 		go get(url, results)
 	}
 	for range list {
+		// the channel will block if there is no data to read
 		r := <-results
 		if nil != r.err {
 			log.Printf("%-20s %s\n", r.url, r.latency)
